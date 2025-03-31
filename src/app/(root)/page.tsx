@@ -44,8 +44,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
   export default function Home() {
     return (
-      <main className="container mx-auto px-4 py-8">
-        <section className="text-center mb-16">
+      <main className="container mx-auto px-4 py-8 grow">
+        <section className="text-center">
           <h1 className="text-4xl font-bold mb-4">Make a Difference Today</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Join our community of changemakers. Sign petitions, start fundraisers, and create positive impact in your
@@ -61,7 +61,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
           </div>
         </section>
   
-        <section className="mb-16">
+        <section className="my-16">
           <h2 className="text-3xl font-semibold mb-8 text-center">Featured Causes</h2>
           <Tabs defaultValue="petitions" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -85,7 +85,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
           </Tabs>
         </section>
   
-        <section className="mb-16">
+        <section className="my-16">
           <Card>
             <CardHeader>
               <CardTitle>Success Stories</CardTitle>
@@ -123,7 +123,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
           </Card>
         </section>
   
-        <section className="text-center">
+        <section className="text-center my-16">
           <h2 className="text-3xl font-semibold mb-4">Ready to Make a Difference?</h2>
           <p className="text-xl mb-8">Join thousands of others who are creating change every day.</p>
           <Button size="lg" asChild>

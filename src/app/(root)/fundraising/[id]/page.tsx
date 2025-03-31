@@ -10,6 +10,41 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import type { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const { id } = await params;
+  const searchParamsObj = await searchParams;
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+
+  // Replace with actual API call to fetch campaign details
+  const campaignTitle = `${campaign.title} - PetitionFund`;
+
+  return {
+    title: campaignTitle,
+    description: campaign.description,
+    openGraph: {
+      title: campaignTitle,
+      description: campaign.description,
+      images: [
+        {
+          url: campaign.image,
+          alt: campaignTitle,
+        },
+      ],
+    },
+  };
+}
 
 // This would typically come from an API call
 const campaign = {
@@ -17,7 +52,7 @@ const campaign = {
   title: "Community Center Renovation",
   description:
     "Our local community center has been a cornerstone of our neighborhood for decades, but it's in desperate need of renovation. We're raising funds to update the facilities, improve accessibility, and create new spaces for community programs. Your donation will help ensure that this vital resource continues to serve our community for generations to come.",
-  image: "/community-centre-renovation.jpeg",
+  image: `${process.env.NEXT_PUBLIC_DOMAIN}/community-centre-renovation.jpeg`,
   creatorName: "Community First Organization",
   creatorAvatar: "/placeholder.svg",
   amountRaised: 50000,

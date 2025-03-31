@@ -10,14 +10,50 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import type { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+
+  // const { id } = await params;
+  // const searchParamsObj = await searchParams;
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+
+  // Simulate fetching petition details dynamically
+  const petitionTitle = `${petition.title} - PetitionFund`;
+
+  return {
+    title: petitionTitle,
+    description: petition.description,
+    openGraph: {
+      title: petitionTitle,
+      description: petition.description,
+      images: [
+        {
+          url: petition.image,
+          alt: petitionTitle,
+        },
+      ],
+    },
+  };
+}
 
 // This would typically come from an API call
 const petition = {
   id: "1",
   title: "Save the Local Park",
   description:
-    "Our beloved community park is at risk of being sold to developers. This green space has been a cornerstone of our neighborhood for generations, providing a place for children to play, families to gather, and nature to thrive in our urban environment. We&apos;re calling on the city council to protect this vital community asset and maintain it as a public park for years to come.",
-  image: "/save-the-local-parks.jpeg",
+    "Our beloved community park is at risk of being sold to developers. This green space has been a cornerstone of our neighborhood for generations, providing a place for children to play, families to gather, and nature to thrive in our urban environment. We're calling on the city council to protect this vital community asset and maintain it as a public park for years to come.",
+  image: `${process.env.NEXT_PUBLIC_DOMAIN}/save-the-local-parks.jpeg`,
   creatorName: "Jane Doe",
   creatorAvatar: "/placeholder.svg",
   signatureCount: 5000,
@@ -32,7 +68,7 @@ const petition = {
       id: "2",
       author: "Emily Brown",
       content:
-        "I&apos;ve been bringing my kids here for years. It would be a tragedy to lose this space.",
+        "I've been bringing my kids here for years. It would be a tragedy to lose this space.",
     },
   ],
 };
@@ -42,13 +78,14 @@ export default async function PetitionPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const id = (await params).id;
-  console.log(id);
+
   const progress = (petition.signatureCount / petition.signatureGoal) * 100;
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-16">
         <div className="md:col-span-2">
           <h1 className="text-3xl font-bold mb-4">{petition.title}</h1>
           <Image

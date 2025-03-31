@@ -1,9 +1,16 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PetitionCard } from "@/components/shared/petition-card"
-import { FundraisingCard } from "@/components/shared/fundraising-card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PetitionCard } from "@/components/shared/petition-card";
+import { FundraisingCard } from "@/components/shared/fundraising-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 // This would typically come from an API call
 const userData = {
@@ -45,21 +52,27 @@ const userData = {
       goalAmount: 50000,
     },
   ],
-}
+};
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  // console.log(session)
+  if (!session?.user) {
+    redirect("/sign-in");
+  }
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 grow">
       <div className="flex items-center mb-8">
         <Avatar className="h-20 w-20 mr-4">
-          <AvatarImage src={userData.avatar} alt={userData.name} />
-          <AvatarFallback>{userData.name[0]}</AvatarFallback>
+          <AvatarImage src={session.user.image as string} alt={userData.name} />
+          <AvatarFallback>{session.user?.name?.[0] as string}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-3xl font-bold">{userData.name}</h1>
-          <Button variant="outline" className="mt-2">
+          <h1 className="text-3xl font-bold">{session.user.name}</h1>
+          {/* <Button variant="outline" className="mt-2">
             Edit Profile
-          </Button>
+          </Button> */}
+          <p className="text-muted-foreground">{session.user.email}</p>
         </div>
       </div>
 
@@ -84,7 +97,9 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Your Fundraisers</CardTitle>
-                <CardDescription>Fundraisers you&apos;ve created</CardDescription>
+                <CardDescription>
+                  Fundraisers you&apos;ve created
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {userData.createdFundraisers.map((fundraiser) => (
@@ -110,7 +125,9 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Donations</CardTitle>
-                <CardDescription>Campaigns you&apos;ve donated to</CardDescription>
+                <CardDescription>
+                  Campaigns you&apos;ve donated to
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {userData.donations.map((fundraiser) => (
@@ -122,6 +139,5 @@ export default function DashboardPage() {
         </TabsContent>
       </Tabs>
     </main>
-  )
+  );
 }
-
