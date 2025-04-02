@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "petitionfund.vercel.app",
       },
+      {
+        protocol: "https",
+        hostname: "*",
+      },
     ],
   },
 };

@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import type { Metadata, ResolvingMetadata } from "next";
+import { getPetition } from "@/lib/actions/petition.actions";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -22,9 +23,17 @@ export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // read route params
-
-  // const { id } = await params;
+  const { id } = await params;
+  const petition = await getPetition(id);
+  if (!petition)
+    return {
+      title: "Petition not found",
+      description: "This petition does not exist.",
+      openGraph: {
+        title: "Petition not found",
+        description: "This petition does not exist.",
+      },
+    };
   // const searchParamsObj = await searchParams;
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -39,7 +48,7 @@ export async function generateMetadata(
       description: petition.description,
       images: [
         {
-          url: petition.image,
+          url: String(petition.image),
           alt: petitionTitle,
         },
       ],
@@ -47,41 +56,16 @@ export async function generateMetadata(
   };
 }
 
-// This would typically come from an API call
-const petition = {
-  id: "1",
-  title: "Save the Local Park",
-  description:
-    "Our beloved community park is at risk of being sold to developers. This green space has been a cornerstone of our neighborhood for generations, providing a place for children to play, families to gather, and nature to thrive in our urban environment. We're calling on the city council to protect this vital community asset and maintain it as a public park for years to come.",
-  image: `${process.env.NEXT_PUBLIC_DOMAIN}/save-the-local-parks.jpeg`,
-  creatorName: "Jane Doe",
-  creatorAvatar: "/placeholder.svg",
-  signatureCount: 5000,
-  signatureGoal: 10000,
-  comments: [
-    {
-      id: "1",
-      author: "John Smith",
-      content: "This park means so much to our community. We must save it!",
-    },
-    {
-      id: "2",
-      author: "Emily Brown",
-      content:
-        "I've been bringing my kids here for years. It would be a tragedy to lose this space.",
-    },
-  ],
-};
-
 export default async function PetitionPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const id = (await params).id;
+  const petition = await getPetition(id);
+  if (!petition) return redirect("/");
 
-  const progress = (petition.signatureCount / petition.signatureGoal) * 100;
+  const progress = (petition.current / petition.goal) * 100;
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -102,7 +86,9 @@ export default async function PetitionPage({
                 src={petition.creatorAvatar}
                 alt={petition.creatorName}
               />
-              <AvatarFallback>{petition.creatorName[0]}</AvatarFallback>
+              <AvatarFallback>
+                {petition.creatorName?.substring(0, 1)}
+              </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold">
@@ -110,7 +96,7 @@ export default async function PetitionPage({
               </p>
             </div>
           </div>
-          <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+          {/* <h2 className="text-2xl font-semibold mb-4">Comments</h2>
           {petition.comments.map((comment) => (
             <Card key={comment.id} className="mb-4">
               <CardHeader>
@@ -122,20 +108,20 @@ export default async function PetitionPage({
             </Card>
           ))}
           <Textarea placeholder="Add your comment..." className="mb-2" />
-          <Button>Post Comment</Button>
+          <Button>Post Comment</Button> */}
         </div>
         <div>
           <Card className="sticky top-4">
             <CardHeader>
               <CardTitle>Sign this petition</CardTitle>
               <CardDescription>
-                {petition.signatureCount.toLocaleString()} have signed. Help us
-                get to {petition.signatureGoal.toLocaleString()}!
+                {petition.current.toLocaleString()} have signed. Help us get to{" "}
+                {petition.goal.toLocaleString()}!
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Progress value={progress} className="mb-4" />
-              <Button className="w-full mb-4">Sign Now</Button>
+              <SignNowButton />
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Share:</span>
                 <span>Facebook</span>
@@ -147,5 +133,13 @@ export default async function PetitionPage({
         </div>
       </div>
     </main>
+  );
+}
+
+function SignNowButton() {
+  return (
+    <form action="">
+      <Button className="w-full mb-4">Sign Now</Button>
+    </form>
   );
 }

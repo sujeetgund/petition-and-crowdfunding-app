@@ -1,6 +1,10 @@
 import { auth } from "@/auth";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = [
+  "/dashboard",
+  "/petition/create",
+  "fundraising/create",
+];
 const authROutes = ["/sign-in", "/sign-up"];
 
 export default auth((req) => {

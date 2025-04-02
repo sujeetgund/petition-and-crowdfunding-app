@@ -10,19 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 interface PetitionCardProps {
-  id: string;
+  _id: string;
   title: string;
   description: string;
-  signatureCount: number;
-  signatureGoal: number;
+  current: number;
+  goal: number;
 }
 
 export function PetitionCard({
-  id,
+  _id,
   title,
   description,
-  signatureCount,
-  signatureGoal,
+  current: signatureCount,
+  goal: signatureGoal,
 }: PetitionCardProps) {
   const progress = (signatureCount / signatureGoal) * 100;
 
@@ -42,7 +42,7 @@ export function PetitionCard({
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <Link href={`/petition/${id}`}>Sign Petition</Link>
+          <Link href={`/petition/${_id}`}>Sign Petition</Link>
         </Button>
       </CardFooter>
     </Card>
