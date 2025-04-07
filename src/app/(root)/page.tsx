@@ -92,7 +92,7 @@ export default function Home() {
           Join thousands of others who are creating change every day.
         </p>
         <Button size="lg" asChild>
-          <Link href="/signup">Sign Up Now</Link>
+          <Link href="/sign-in">Sign Up Now</Link>
         </Button>
       </section>
     </main>

@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     ],
     createdFundraisers: [
       {
-        id: "1",
+        _id: "1",
         title: "Community Center Renovation",
         description: "Help us upgrade our local community center.",
         amountRaised: 50000,
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
     ],
     donations: [
       {
-        id: "2",
+        _id: "2",
         title: "School Music Program",
         description: "Support music education in our schools.",
         amountRaised: 25000,
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
               </CardHeader>
               <CardContent>
                 {userData.createdFundraisers.map((fundraiser) => (
-                  <FundraisingCard key={fundraiser.id} {...fundraiser} />
+                  <FundraisingCard key={fundraiser._id} {...fundraiser} />
                 ))}
               </CardContent>
             </Card>
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
               </CardHeader>
               <CardContent>
                 {userData.donations.map((fundraiser) => (
-                  <FundraisingCard key={fundraiser.id} {...fundraiser} />
+                  <FundraisingCard key={fundraiser._id} {...fundraiser} />
                 ))}
               </CardContent>
             </Card>

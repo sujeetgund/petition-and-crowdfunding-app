@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { Metadata, ResolvingMetadata } from "next";
+import { getFundraisingById } from "@/lib/actions/fundraising.actions";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -22,12 +24,20 @@ export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // read route params
   const { id } = await params;
   const searchParamsObj = await searchParams;
+  const campaign = await getFundraisingById(id);
+  if (!campaign)
+    return {
+      title: "Campaign not found",
+      description: "This campaign does not exist.",
+      openGraph: {
+        title: "Campaign not found",
+        description: "This campaign does not exist.",
+      },
+    };
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
-  // Replace with actual API call to fetch campaign details
   const campaignTitle = `${campaign.title} - PetitionFund`;
 
   return {
@@ -38,7 +48,7 @@ export async function generateMetadata(
       description: campaign.description,
       images: [
         {
-          url: campaign.image,
+          url: String(campaign.image),
           alt: campaignTitle,
         },
       ],
@@ -47,35 +57,35 @@ export async function generateMetadata(
 }
 
 // This would typically come from an API call
-const campaign = {
-  id: "1",
-  title: "Community Center Renovation",
-  description:
-    "Our local community center has been a cornerstone of our neighborhood for decades, but it's in desperate need of renovation. We're raising funds to update the facilities, improve accessibility, and create new spaces for community programs. Your donation will help ensure that this vital resource continues to serve our community for generations to come.",
-  image: `${process.env.NEXT_PUBLIC_DOMAIN}/community-centre-renovation.jpeg`,
-  creatorName: "Community First Organization",
-  creatorAvatar: "/placeholder.svg",
-  amountRaised: 50000,
-  goalAmount: 100000,
-  supporters: [
-    { id: "1", name: "Alice Johnson", amount: 100 },
-    { id: "2", name: "Bob Williams", amount: 250 },
-  ],
-  updates: [
-    {
-      id: "1",
-      date: "2023-06-15",
-      content:
-        "We've reached 50% of our goal! Thank you to all our supporters.",
-    },
-    {
-      id: "2",
-      date: "2023-06-01",
-      content:
-        "Renovation plans have been finalized. We're excited to share them soon!",
-    },
-  ],
-};
+// const campaign = {
+//   id: "1",
+//   title: "Community Center Renovation",
+//   description:
+//     "Our local community center has been a cornerstone of our neighborhood for decades, but it's in desperate need of renovation. We're raising funds to update the facilities, improve accessibility, and create new spaces for community programs. Your donation will help ensure that this vital resource continues to serve our community for generations to come.",
+//   image: `${process.env.NEXT_PUBLIC_DOMAIN}/community-centre-renovation.jpeg`,
+//   creatorName: "Community First Organization",
+//   creatorAvatar: "/placeholder.svg",
+//   amountRaised: 50000,
+//   goalAmount: 100000,
+//   supporters: [
+//     { id: "1", name: "Alice Johnson", amount: 100 },
+//     { id: "2", name: "Bob Williams", amount: 250 },
+//   ],
+//   updates: [
+//     {
+//       id: "1",
+//       date: "2023-06-15",
+//       content:
+//         "We've reached 50% of our goal! Thank you to all our supporters.",
+//     },
+//     {
+//       id: "2",
+//       date: "2023-06-01",
+//       content:
+//         "Renovation plans have been finalized. We're excited to share them soon!",
+//     },
+//   ],
+// };
 
 export default async function FundraisingPage({
   params,
@@ -83,8 +93,10 @@ export default async function FundraisingPage({
   params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
-  console.log(id);
-  const progress = (campaign.amountRaised / campaign.goalAmount) * 100;
+  // console.log(id);
+  const campaign = await getFundraisingById(id);
+  if (!campaign) return redirect("/");
+  const progress = (campaign.current / campaign.goal) * 100;
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -105,7 +117,9 @@ export default async function FundraisingPage({
                 src={campaign.creatorAvatar}
                 alt={campaign.creatorName}
               />
-              <AvatarFallback>{campaign.creatorName[0]}</AvatarFallback>
+              <AvatarFallback>
+                {campaign.creatorName?.substring(0, 1)}
+              </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold">
@@ -114,7 +128,7 @@ export default async function FundraisingPage({
             </div>
           </div>
           <h2 className="text-2xl font-semibold mb-4">Updates</h2>
-          {campaign.updates.map((update) => (
+          {/* {campaign.updates.map((update) => (
             <Card key={update.id} className="mb-4">
               <CardHeader>
                 <CardTitle>
@@ -125,15 +139,16 @@ export default async function FundraisingPage({
                 <CardDescription>{update.content}</CardDescription>
               </CardContent>
             </Card>
-          ))}
+          ))} */}
+          No updates yet.
         </div>
         <div>
           <Card className="sticky top-4">
             <CardHeader>
               <CardTitle>Support this campaign</CardTitle>
               <CardDescription>
-                ${campaign.amountRaised.toLocaleString()} raised of $
-                {campaign.goalAmount.toLocaleString()} goal
+                ₹{campaign.current.toLocaleString()} raised of ₹
+                {campaign.goal.toLocaleString()} goal
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -157,7 +172,7 @@ export default async function FundraisingPage({
               <CardTitle>Recent Supporters</CardTitle>
             </CardHeader>
             <CardContent>
-              {campaign.supporters.map((supporter) => (
+              {/* {campaign.supporters.map((supporter) => (
                 <div
                   key={supporter.id}
                   className="flex justify-between items-center mb-2"
@@ -165,7 +180,8 @@ export default async function FundraisingPage({
                   <span>{supporter.name}</span>
                   <span>${supporter.amount}</span>
                 </div>
-              ))}
+              ))} */}
+              No recent supporters yet.
             </CardContent>
           </Card>
         </div>

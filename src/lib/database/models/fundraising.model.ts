@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IFundraising extends Document {
+export interface IFundraising extends Document {
   title: string;
   description: string;
   image?: string;

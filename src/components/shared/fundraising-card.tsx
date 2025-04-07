@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 interface FundraisingCardProps {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   amountRaised: number;
@@ -18,7 +18,7 @@ interface FundraisingCardProps {
 }
 
 export function FundraisingCard({
-  id,
+  _id,
   title,
   description,
   amountRaised,
@@ -43,7 +43,7 @@ export function FundraisingCard({
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <Link href={`/fundraising/${id}`}>Donate Now</Link>
+          <Link href={`/fundraising/${_id}`}>Donate Now</Link>
         </Button>
       </CardFooter>
     </Card>

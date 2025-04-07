@@ -3,30 +3,16 @@ import { FundraisingCard } from "@/components/shared/fundraising-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getPetitions } from "@/lib/actions/petition.actions";
+import { getFundraisings } from "@/lib/actions/fundraising.actions";
 
 export default async function FeaturedCauses() {
-  const featuredPetitions = await getPetitions({ limit: 6 });
+  // const featuredPetitions = await getPetitions({ limit: 6 });
+  // const trendingFundraisers = await getFundraisings({ limit: 6 });
 
-  //   console.log(featuredPetitions.petitions);
-
-  const trendingFundraisers = [
-    {
-      id: "1",
-      title: "Community Center Renovation",
-      description:
-        "Help us upgrade our local community center for everyone to enjoy.",
-      amountRaised: 50000,
-      goalAmount: 100000,
-    },
-    {
-      id: "2",
-      title: "School Music Program",
-      description:
-        "Support music education in our schools by funding new instruments.",
-      amountRaised: 25000,
-      goalAmount: 50000,
-    },
-  ];
+  const [featuredPetitions, trendingFundraisers] = await Promise.all([
+    getPetitions({ limit: 6 }),
+    getFundraisings({ limit: 6 }),
+  ]);
 
   return (
     <section className="my-16">
@@ -70,9 +56,32 @@ export default async function FeaturedCauses() {
         </TabsContent>
         <TabsContent value="fundraisers">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trendingFundraisers.map((fundraiser) => (
-              <FundraisingCard key={fundraiser.id} {...fundraiser} />
-            ))}
+            {trendingFundraisers !== undefined ? (
+              trendingFundraisers.length > 0 ? (
+                trendingFundraisers.map((campaign) => (
+                  <FundraisingCard
+                    key={String(campaign._id)}
+                    _id={String(campaign._id)}
+                    title={campaign.title}
+                    description={campaign.description}
+                    amountRaised={campaign.current}
+                    goalAmount={campaign.goal}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3 text-center">
+                  <p className="text-gray-500">
+                    No fundraising campaigns available at the moment.
+                  </p>
+                </div>
+              )
+            ) : (
+              <div className="col-span-3 text-center">
+                <p className="text-red-500">
+                  Failed to fetch fundraising campaigns. Please try again later.
+                </p>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>
