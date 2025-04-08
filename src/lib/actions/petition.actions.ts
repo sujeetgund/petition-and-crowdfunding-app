@@ -42,7 +42,20 @@ export const getPetition = async (id: string) => {
   return petition;
 };
 
+// get petitions by email
+export const getPetitionsByEmail = async (email: string) => {
+  await connectToDatabase();
+
+  const petitions: IPetition[] = await Petition.find({
+    creator_email: email,
+  }).exec();
+  if (!petitions) {
+    return [];
+  }
+
+  return petitions;
+};
 
 // export const signPetition = async (id: string, email: string) => {
-  
+
 // }

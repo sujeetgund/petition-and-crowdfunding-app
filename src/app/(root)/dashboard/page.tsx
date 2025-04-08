@@ -11,37 +11,34 @@ import { FundraisingCard } from "@/components/shared/fundraising-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { getPetitionsByEmail } from "@/lib/actions/petition.actions";
+import { IPetition } from "@/lib/database/models/petition.model";
+import { getFundraisingByEmail } from "@/lib/actions/fundraising.actions";
+import { IFundraising } from "@/lib/database/models/fundraising.model";
 
 // This would typically come from an API call
 
 export default async function DashboardPage() {
   const session = await auth();
   // console.log(session)
-  if (!session?.user) {
+  if (!session?.user || !session?.user.email) {
+    // Redirect to sign-in page if user is not authenticated
     redirect("/sign-in");
   }
+
+  const createdPetitions: IPetition[] = await getPetitionsByEmail(
+    session.user.email
+  );
+  const createdFundraisers: IFundraising[] = await getFundraisingByEmail(
+    session.user.email
+  );
+  // console.log(createdPetitions)
 
   const userData = {
     name: session.user.name,
     avatar: session.user.image,
-    createdPetitions: [
-      {
-        _id: "1",
-        title: "Save the Local Park",
-        description: "Protect our community green space.",
-        current: 5000,
-        goal: 10000,
-      },
-    ],
-    createdFundraisers: [
-      {
-        _id: "1",
-        title: "Community Center Renovation",
-        description: "Help us upgrade our local community center.",
-        amountRaised: 50000,
-        goalAmount: 100000,
-      },
-    ],
+    createdPetitions: createdPetitions,
+    createdFundraisers: createdFundraisers,
     signedPetitions: [
       {
         _id: "2",
@@ -90,9 +87,18 @@ export default async function DashboardPage() {
                 <CardDescription>Petitions you&apos;ve created</CardDescription>
               </CardHeader>
               <CardContent>
-                {userData.createdPetitions.map((petition) => (
-                  <PetitionCard key={petition._id} {...petition} />
-                ))}
+                <div className="flex-wrap space-y-3 gap-3 md:flex md:space-y-0 md:gap-3">
+                  {userData.createdPetitions.map((petition) => (
+                    <PetitionCard
+                      key={String(petition._id)}
+                      _id={String(petition._id)}
+                      title={petition.title}
+                      description={petition.description}
+                      current={petition.current}
+                      goal={petition.goal}
+                    />
+                  ))}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -104,7 +110,14 @@ export default async function DashboardPage() {
               </CardHeader>
               <CardContent>
                 {userData.createdFundraisers.map((fundraiser) => (
-                  <FundraisingCard key={fundraiser._id} {...fundraiser} />
+                  <FundraisingCard
+                    key={String(fundraiser._id)}
+                    _id={String(fundraiser._id)}
+                    title={fundraiser.title}
+                    description={fundraiser.description}
+                    amountRaised={fundraiser.current}
+                    goalAmount={fundraiser.goal}
+                  />
                 ))}
               </CardContent>
             </Card>

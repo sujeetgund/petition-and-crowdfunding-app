@@ -37,7 +37,7 @@ export function FundraisingCard({
         </p>
         <Progress value={progress} className="w-full" />
         <p className="text-sm mt-2">
-          ${amountRaised.toLocaleString()} of ${goalAmount.toLocaleString()}{" "}
+          ₹{amountRaised.toLocaleString()} of ₹{goalAmount.toLocaleString()}{" "}
           raised
         </p>
       </CardContent>
