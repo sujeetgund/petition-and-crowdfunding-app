@@ -7,6 +7,7 @@ export interface IPetition extends Document {
   creator_email: string;
   goal: number;
   current: number;
+  status: "pending" | "approved" | "rejected";
 }
 
 const PetitionSchema = new Schema<IPetition>(
@@ -25,6 +26,11 @@ const PetitionSchema = new Schema<IPetition>(
         },
         message: "Current value must be less than or equal to the goal.",
       },
+    },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
   },
   {

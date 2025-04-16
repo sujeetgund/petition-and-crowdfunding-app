@@ -7,6 +7,7 @@ export interface IFundraising extends Document {
   creator_email: string;
   goal: number;
   current: number;
+  status: "pending" | "approved" | "rejected";
 }
 
 const FundraisingSchema = new Schema<IFundraising>(
@@ -25,6 +26,11 @@ const FundraisingSchema = new Schema<IFundraising>(
         },
         message: "Current value must be less than or equal to the goal.",
       },
+    },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
   },
   {

@@ -4,6 +4,8 @@ import { connectToDatabase } from "@/lib/database";
 import Petition from "@/lib/database/models/petition.model";
 import { PetitionSchema } from "@/lib/zod-schemas";
 
+const LAMBDA_URI = process.env.LAMBDA_URI || "";
+
 export const createPetition = async (prev: unknown, formData: FormData) => {
   await connectToDatabase();
 
@@ -39,6 +41,17 @@ export const createPetition = async (prev: unknown, formData: FormData) => {
       errors: ["Failed to create petition"],
     };
   }
+
+  fetch(LAMBDA_URI, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: new_petition._id,
+      title: new_petition.title,
+      content: new_petition.content,
+      type: "petition",
+    }),
+  });
 
   return {
     success: true,

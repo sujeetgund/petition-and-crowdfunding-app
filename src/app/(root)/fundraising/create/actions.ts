@@ -4,6 +4,8 @@ import { connectToDatabase } from "@/lib/database";
 import Fundraising from "@/lib/database/models/fundraising.model";
 import { FundraisingSchema } from "@/lib/zod-schemas";
 
+const LAMBDA_URI = process.env.LAMBDA_URI || "";
+
 export const createFundraising = async (prev: unknown, formData: FormData) => {
   await connectToDatabase();
 
@@ -25,7 +27,7 @@ export const createFundraising = async (prev: unknown, formData: FormData) => {
 
   const data = result.data;
 
-  const new_petition = await Fundraising.create({
+  const new_campaign = await Fundraising.create({
     title: data.title,
     description: data.description,
     image: data.image,
@@ -33,12 +35,23 @@ export const createFundraising = async (prev: unknown, formData: FormData) => {
     goal: data.goal,
     current: data.current,
   });
-  if (!new_petition) {
+  if (!new_campaign) {
     return {
       success: false,
-      errors: ["Failed to create petition"],
+      errors: ["Failed to create campaign"],
     };
   }
+
+  fetch(LAMBDA_URI, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: new_campaign._id,
+      title: new_campaign.title,
+      content: new_campaign.content,
+      type: "fundraising",
+    }),
+  });
 
   return {
     success: true,

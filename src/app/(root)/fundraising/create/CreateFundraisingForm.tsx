@@ -25,7 +25,7 @@ export function CreateFundraisingForm({ email }: { email: string }) {
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">
-          Create a New Fundraising Campaign
+          Create a Fundraising Campaign
         </CardTitle>
         <CardDescription>
           Fill out the form below to create a new fundraising campaign. Provide
@@ -39,7 +39,8 @@ export function CreateFundraisingForm({ email }: { email: string }) {
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertTitle className="text-green-800">Success!</AlertTitle>
             <AlertDescription className="text-green-700">
-              Your petition has been created successfully. Redirecting...
+              Your fundraising campaign is in pending review. Once approved, it
+              will be visible to the public.
             </AlertDescription>
           </Alert>
         )}
@@ -123,7 +124,7 @@ export function CreateFundraisingForm({ email }: { email: string }) {
           Cancel
         </Button>
         <Button type="submit" form="petition-form" disabled={pending}>
-          {pending ? "Creating..." : "Create Petition"}
+          {pending ? "Creating..." : "Create Campaign"}
         </Button>
       </CardFooter>
     </Card>

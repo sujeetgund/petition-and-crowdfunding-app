@@ -36,7 +36,8 @@ export function CreatePetitionForm({ email }: { email: string }) {
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertTitle className="text-green-800">Success!</AlertTitle>
             <AlertDescription className="text-green-700">
-              Your petition has been created successfully. Redirecting...
+              Your petition is in pending review. You will be notified once it
+              is approved.
             </AlertDescription>
           </Alert>
         )}
