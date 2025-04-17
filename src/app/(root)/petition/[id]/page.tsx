@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,6 +11,8 @@ import {
 import type { Metadata, ResolvingMetadata } from "next";
 import { getPetition } from "@/lib/actions/petition.actions";
 import { redirect } from "next/navigation";
+import SignNowButton from "./SignPetitionButton";
+import { auth } from "@/auth";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -64,6 +65,18 @@ export default async function PetitionPage({
   const id = (await params).id;
   const petition = await getPetition(id);
   if (!petition) return redirect("/");
+
+  const session = await auth();
+  const user_email = session?.user?.email || undefined;
+
+  if (!user_email) {
+    redirect("/sign-in");
+  }
+
+  let isCreator = false;
+  if (petition.creator_email === user_email) {
+    isCreator = true;
+  }
 
   const progress = (petition.current / petition.goal) * 100;
 
@@ -121,7 +134,7 @@ export default async function PetitionPage({
             </CardHeader>
             <CardContent>
               <Progress value={progress} className="mb-4" />
-              <SignNowButton />
+              {!isCreator && <SignNowButton event_id={id} user_email={user_email} />}
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Share:</span>
                 <span>Facebook</span>
@@ -133,13 +146,5 @@ export default async function PetitionPage({
         </div>
       </div>
     </main>
-  );
-}
-
-function SignNowButton() {
-  return (
-    <form action="">
-      <Button className="w-full mb-4">Sign Now</Button>
-    </form>
   );
 }

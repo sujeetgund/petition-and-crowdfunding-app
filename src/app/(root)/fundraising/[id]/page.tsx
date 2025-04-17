@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -9,10 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import type { Metadata, ResolvingMetadata } from "next";
 import { getFundraisingById } from "@/lib/actions/fundraising.actions";
 import { redirect } from "next/navigation";
+import SignNowButton from "./SignFundraisingButton";
+import { auth } from "@/auth";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -93,9 +93,17 @@ export default async function FundraisingPage({
   params: Promise<{ id: string }>;
 }) {
   const id = (await params).id;
-  // console.log(id);
+
   const campaign = await getFundraisingById(id);
   if (!campaign) return redirect("/");
+
+  const session = await auth();
+  const user_email = session?.user?.email || undefined;
+
+  if (!user_email) {
+    redirect("/sign-in");
+  }
+
   const progress = (campaign.current / campaign.goal) * 100;
 
   return (
@@ -153,12 +161,7 @@ export default async function FundraisingPage({
             </CardHeader>
             <CardContent>
               <Progress value={progress} className="mb-4" />
-              <Input
-                type="number"
-                placeholder="Enter amount"
-                className="mb-2"
-              />
-              <Button className="w-full mb-4">Donate Now</Button>
+              <SignNowButton event_id={id} user_email={user_email} />
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Share:</span>
                 <span>Facebook</span>
